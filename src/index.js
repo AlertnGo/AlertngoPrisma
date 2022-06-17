@@ -1,12 +1,15 @@
-const express = require("express");
-const { PrismaClient } = require("@prisma/client");
-const userController = require("./modules/user/userControllers");
+import express from "express";
+import helmet from "helmet";
+import { PrismaClient } from "@prisma/client";
+import userController from "./modules/user/userControllers.js";
 
 const prisma = new PrismaClient();
 const app = express();
+app.use(helmet());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/user", userController);
 
 app.get(`/api`, async (req, res) => {
@@ -17,3 +20,5 @@ app.listen(3000, () =>
   console.log(`
 🚀 Server ready at: http://localhost:3000`)
 );
+
+export default prisma;

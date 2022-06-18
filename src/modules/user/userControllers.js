@@ -1,3 +1,5 @@
+import * as joi from "joi";
+
 const userController = {
   getAllUser: (req, res) => {
     try {

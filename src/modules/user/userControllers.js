@@ -12,25 +12,43 @@ const userController = {
     }
   },
 
-  addUser: async (req, res) => {
+  findUser: async (req, res) => {
     try {
       const user = await prisma.user.findUnique({
         where: {
-          email: req.email,
+          id: req.params.id,
         },
       });
-      if (user === 0) {
-        const adduser = await prisma.user.create({
-          data: {
-            email: req.email,
-            name: req.name,
-          },
-        });
-        res.status(200).json(adduser);
+      if (user) {
+        res.status(200).json(user);
       } else {
+        res.status(404);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+  addUser: async (req, res) => {
+    const { name, email } = req.body;
+    try {
+      const findUser = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (findUser.status === 200) {
         res.json({
           message: "user exsite alredy",
         });
+      } else {
+        const adduser = await prisma.user.create({
+          data: {
+            email: email,
+            name: name,
+          },
+        });
+        res.status(200).json(adduser);
       }
     } catch (e) {
       console.log(e);

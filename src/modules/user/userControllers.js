@@ -14,13 +14,24 @@ const userController = {
 
   addUser: async (req, res) => {
     try {
-      const user = await prisma.user.create({
-        data: {
+      const user = await prisma.user.findUnique({
+        where: {
           email: req.email,
-          name: req.name,
         },
       });
-      res.status(200).json(user);
+      if (user === 0) {
+        const adduser = await prisma.user.create({
+          data: {
+            email: req.email,
+            name: req.name,
+          },
+        });
+        res.status(200).json(adduser);
+      } else {
+        res.json({
+          message: "user exsite alredy",
+        });
+      }
     } catch (e) {
       console.log(e);
     }

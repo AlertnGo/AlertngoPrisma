@@ -1,17 +1,28 @@
-import * as joi from "joi";
-import { prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 
 const userController = {
-  getAllUser:async (req, res) => {
+  getAllUser: async (req, res) => {
     try {
-      const users = await prisma.user.findMany()
+      const users = await prisma.user.findMany();
+      res.status(200).json(users);
+    } catch (e) {
+      console.log(e);
+    }
+  },
 
-      res.json(users)
-    } catch (error) {
-      res.status(400).json({
-        message: "Something went wrong",
-      })
+  addUser: async (req, res) => {
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email: req.email,
+          name: req.name,
+        },
+      });
+      res.status(200).json(user);
+    } catch (e) {
+      console.log(e);
     }
   },
 };

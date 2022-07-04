@@ -1,6 +1,6 @@
 import express from "express";
 import helmet from "helmet";
-import { PrismaClient } from "@prisma/client";
+
 import userRoute from "./modules/user/userRouter.mjs";
 import prisma from "../index.js";
 
@@ -9,7 +9,7 @@ app.use(helmet());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(userRoute);
+app.use('/api/' , userRoute);
 
 app.get(`/api`, async (req, res) => {
   res.json("Bienvenu sur le serveur de Alertngo");

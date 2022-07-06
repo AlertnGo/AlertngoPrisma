@@ -5,13 +5,11 @@ const prisma = new PrismaClient();
 
 const userController = {
   //register
-  addUser: async (req, res) => {
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = req.body.password;
+  register: async (req, res) => {
+    const { name, email, password } = req.body;
 
     console.log(req.body);
-    if (email && password) {
+    if (email && password && name) {
       try {
         const findUser = await prisma.user.findUnique({
           where: {
@@ -38,6 +36,36 @@ const userController = {
     }
   },
 
+  //login
+  login: async (req, res) => {
+    const { email, password } = req.body;
+    if (email && password) {
+      try {
+        const findUser = await prisma.user.findUnique({
+          where: {
+            email: email,
+          },
+        });
+        if (findUser) {
+          const comparePassword = await compare(password, findUser.password);
+          if (comparePassword) {
+            res.status(200).json(findUser);
+          } else {
+            res.status(401).json({
+              message: "Mot de passe incorrect",
+            });
+          }
+        } else {
+          res.status(401).json({
+            message: "Utilisateur non trouvé",
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  },
+
   //get all user
   getAllUser: async (req, res) => {
     try {
@@ -47,7 +75,6 @@ const userController = {
       console.log(e);
     }
   },
-
 
   //get user by id
   findUser: async (req, res) => {
